@@ -156,6 +156,12 @@ $env:CTFD_TOKEN = "<admin-api-token>"
 python scripts/sync-challenges.py
 ```
 
+The URL and token can also be passed as flags, which is convenient when running from a remote admin workstation:
+
+```powershell
+python scripts/sync-challenges.py --url https://ctf.example.com --token <admin-api-token>
+```
+
 You can also load from an explicit top-level manifest:
 
 ```powershell

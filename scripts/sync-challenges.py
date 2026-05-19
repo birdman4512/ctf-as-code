@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import mimetypes
 import os
@@ -13,6 +14,13 @@ CTFD_TOKEN = os.environ.get("CTFD_TOKEN")
 CHALLENGES_DIR = pathlib.Path(os.environ.get("CHALLENGES_DIR", "challenges"))
 CTFD_MANIFEST = os.environ.get("CTFD_MANIFEST")
 UPLOAD_FILES_ON_UPDATE = os.environ.get("CTFD_UPLOAD_FILES_ON_UPDATE", "").lower() == "true"
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Sync challenge manifests to a CTFd instance.")
+    parser.add_argument("--url", default=CTFD_URL, help="CTFd base URL (env: CTFD_URL)")
+    parser.add_argument("--token", default=CTFD_TOKEN, help="CTFd admin API token (env: CTFD_TOKEN)")
+    return parser.parse_args()
 
 
 def api(method, path, payload=None, headers=None):
@@ -123,8 +131,13 @@ def sync_files(challenge_dir, challenge_id, files):
 
 
 def main():
+    args = parse_args()
+    global CTFD_URL, CTFD_TOKEN
+    CTFD_URL = args.url.rstrip("/")
+    CTFD_TOKEN = args.token
+
     if not CTFD_TOKEN:
-        print("Set CTFD_TOKEN to an admin API token from CTFd.", file=sys.stderr)
+        print("Set CTFD_TOKEN env var or pass --token with an admin API token from CTFd.", file=sys.stderr)
         return 2
 
     known = existing_challenges()
