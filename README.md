@@ -10,7 +10,7 @@ The repo is intended to keep both the platform and starter challenge content und
 |---|---|---|
 | Caddy | Reverse proxy | http://localhost |
 | CTFd | CTF platform | http://localhost |
-| Pi-hole | DNS and admin UI | http://pihole.localhost/admin |
+| Pi-hole | DNS and admin UI | http://localhost/pihole/admin/ |
 | MariaDB | CTFd database | Internal only |
 | Redis | CTFd cache | Internal only |
 
@@ -61,21 +61,21 @@ http://localhost
 
 Caddy is included as the reverse proxy because the config is tiny and it can obtain TLS certificates automatically for real public hostnames.
 
-Local defaults in `.env.example` use plain HTTP:
+Local defaults in `.env.example` use plain HTTP on any hostname:
 
 ```env
-CTFD_SITE_ADDRESS=http://localhost
-PIHOLE_SITE_ADDRESS=http://pihole.localhost
+CTFD_SITE_ADDRESS=http://:80
+PIHOLE_PATH_PREFIX=/pihole
 ```
 
 For public HTTPS, change them to real DNS names that point at the host:
 
 ```env
 CTFD_SITE_ADDRESS=ctf.example.com
-PIHOLE_SITE_ADDRESS=pihole.example.com
+PIHOLE_PATH_PREFIX=/pihole
 ```
 
-Caddy will then handle ACME certificates on ports `80` and `443`.
+Caddy will then handle ACME certificates on ports `80` and `443`. Pi-hole remains available under the configured path, for example `https://ctf.example.com/pihole/admin/`.
 
 ## Configuration
 
@@ -91,7 +91,7 @@ Important variables:
 | `PIHOLE_WEBPASSWORD` | Pi-hole admin password, mapped to `FTLCONF_webserver_api_password` |
 | `PIHOLE_UPSTREAM_DNS` | Pi-hole upstream DNS servers, mapped to `FTLCONF_dns_upstreams` |
 | `CTFD_SITE_ADDRESS` | Caddy site address for CTFd |
-| `PIHOLE_SITE_ADDRESS` | Caddy site address for Pi-hole |
+| `PIHOLE_PATH_PREFIX` | Subpath for Pi-hole, mapped to `FTLCONF_webserver_paths_prefix` |
 | `DNS_PORT` | Host DNS port for Pi-hole |
 
 Image versions are pinned in `.env.example` and can be updated deliberately.
@@ -243,9 +243,19 @@ docker compose logs -f ctfd-db
 docker compose logs -f ctfd
 ```
 
-### `pihole.localhost` does not resolve
+### Accessing Pi-hole
 
-Most systems resolve `*.localhost`, but not all tools do. You can change `PIHOLE_SITE_ADDRESS` to `http://localhost:8053` only if you also expose Pi-hole directly, or add a hosts-file entry for your chosen local hostname.
+Pi-hole is served under `PIHOLE_PATH_PREFIX`, so the default local admin URL is:
+
+```text
+http://localhost/pihole/admin/
+```
+
+If you publish Caddy on a non-default port for testing, include that port:
+
+```text
+http://localhost:8080/pihole/admin/
+```
 
 ## File Structure
 
