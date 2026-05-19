@@ -134,29 +134,25 @@
       border: 1px solid var(--line);
     }
 
-    footer {
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: .9rem;
+    [hidden] {
+      display: none;
     }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <h1>CTF Portal</h1>
-      <p class="lede">Jump into the competition platform, DNS admin, and any event resources published for this CTF.</p>
+      <h1 id="portal-title">CTF Portal</h1>
+      <p id="portal-description" class="lede">Jump into the competition platform, DNS admin, and any event resources published for this CTF.</p>
     </header>
 
     <section id="resources" class="grid" aria-label="CTF resources"></section>
-
-    <footer>
-      Edit <code>portal/resources.json</code> to publish more links.
-    </footer>
   </main>
 
   <script>
     const container = document.querySelector("#resources");
+    const portalTitle = document.querySelector("#portal-title");
+    const portalDescription = document.querySelector("#portal-description");
 
     function card(resource) {
       const article = document.createElement("article");
@@ -193,7 +189,17 @@
 
     fetch("/resources.json")
       .then((response) => response.json())
-      .then((resources) => {
+      .then((config) => {
+        const resources = Array.isArray(config) ? config : config.resources || [];
+        const title = Array.isArray(config) ? "CTF Portal" : config.title || "CTF Portal";
+        const description = Array.isArray(config)
+          ? "Jump into the competition platform, DNS admin, and any event resources published for this CTF."
+          : config.description || "";
+
+        document.title = title;
+        portalTitle.textContent = title;
+        portalDescription.textContent = description;
+        portalDescription.hidden = description.length === 0;
         container.replaceChildren(...resources.map(card));
       })
       .catch(() => {

@@ -104,7 +104,17 @@ Image versions are pinned in `.env.example` and can be updated deliberately.
 
 The root URL serves a small static portal from `portal/`.
 
-Edit `portal/resources.json` to publish additional CTF links:
+Rename the portal by changing the top-level `title` in `portal/resources.json`:
+
+```json
+{
+  "title": "Example CTF",
+  "description": "Competition links and event resources.",
+  "resources": []
+}
+```
+
+Add links by appending objects to the `resources` list:
 
 ```json
 {
