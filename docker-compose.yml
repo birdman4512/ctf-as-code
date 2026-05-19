@@ -102,19 +102,16 @@ services:
       - "${DNS_PORT:-53}:53/udp"
     environment:
       TZ: ${TZ:-Australia/Brisbane}
-      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: ${PIHOLE_UPSTREAM_DNS:-1.1.1.1;1.0.0.1}
-      DNSMASQ_LISTENING: all
+      FTLCONF_webserver_api_password: ${PIHOLE_WEBPASSWORD}
+      FTLCONF_dns_upstreams: ${PIHOLE_UPSTREAM_DNS:-1.1.1.1;1.0.0.1}
+      FTLCONF_dns_listeningMode: all
     volumes:
       - pihole_config:/etc/pihole
       - pihole_dnsmasq:/etc/dnsmasq.d
     cap_add:
       - NET_ADMIN
-    dns:
-      - 127.0.0.1
-      - 1.1.1.1
     healthcheck:
-      test: ["CMD-SHELL", "dig +short @127.0.0.1 pi-hole.net || exit 1"]
+      test: ["CMD-SHELL", "dig +short @127.0.0.1 pi.hole || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5

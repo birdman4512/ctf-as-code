@@ -88,7 +88,8 @@ Important variables:
 | `CTFD_SECRET_KEY` | CTFd session signing secret |
 | `CTFD_DB_ROOT_PASSWORD` | MariaDB root password |
 | `CTFD_DB_PASSWORD` | MariaDB password for the CTFd user |
-| `PIHOLE_WEBPASSWORD` | Pi-hole admin password |
+| `PIHOLE_WEBPASSWORD` | Pi-hole admin password, mapped to `FTLCONF_webserver_api_password` |
+| `PIHOLE_UPSTREAM_DNS` | Pi-hole upstream DNS servers, mapped to `FTLCONF_dns_upstreams` |
 | `CTFD_SITE_ADDRESS` | Caddy site address for CTFd |
 | `PIHOLE_SITE_ADDRESS` | Caddy site address for Pi-hole |
 | `DNS_PORT` | Host DNS port for Pi-hole |
