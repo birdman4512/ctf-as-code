@@ -1,0 +1,32 @@
+[
+  {
+    "title": "CTFd",
+    "description": "Competition platform, challenges, teams, scoreboard, and admin setup.",
+    "href": "/ctfd/",
+    "label": "Open platform",
+    "group": "Core"
+  },
+  {
+    "title": "Pi-hole",
+    "description": "DNS sinkhole admin interface for local CTF infrastructure.",
+    "href": "/pihole/admin/",
+    "label": "Open admin",
+    "group": "Core"
+  },
+  {
+    "title": "Challenge Files",
+    "description": "Publish static challenge resources or documentation here later.",
+    "href": "#",
+    "label": "Not published yet",
+    "group": "Resources",
+    "disabled": true
+  },
+  {
+    "title": "Rules",
+    "description": "Add event rules, scope, allowed tools, and support information.",
+    "href": "#",
+    "label": "Not published yet",
+    "group": "Resources",
+    "disabled": true
+  }
+]

@@ -1,11 +1,20 @@
 {$CTFD_SITE_ADDRESS:http://:80} {
+	redir {$CTFD_PATH_PREFIX:/ctfd} {$CTFD_PATH_PREFIX:/ctfd}/ 308
 	redir {$PIHOLE_PATH_PREFIX:/pihole} {$PIHOLE_PATH_PREFIX:/pihole}/admin/ 308
+
+	handle_path {$CTFD_PATH_PREFIX:/ctfd}/* {
+		reverse_proxy ctfd:8000 {
+			header_up X-Forwarded-Prefix {$CTFD_PATH_PREFIX:/ctfd}
+		}
+	}
 
 	handle_path {$PIHOLE_PATH_PREFIX:/pihole}/* {
 		reverse_proxy pihole:80
 	}
 
 	handle {
-		reverse_proxy ctfd:8000
+		root * /srv
+		try_files {path} /index.html
+		file_server
 	}
 }

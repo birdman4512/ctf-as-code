@@ -8,9 +8,11 @@ services:
       - "${HTTPS_PORT:-443}:443"
     environment:
       CTFD_SITE_ADDRESS: ${CTFD_SITE_ADDRESS:-http://:80}
+      CTFD_PATH_PREFIX: ${CTFD_PATH_PREFIX:-/ctfd}
       PIHOLE_PATH_PREFIX: ${PIHOLE_PATH_PREFIX:-/pihole}
     volumes:
       - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./portal:/srv:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
@@ -38,7 +40,7 @@ services:
       LOG_FOLDER: /var/log/CTFd
       ACCESS_LOG: "-"
       ERROR_LOG: "-"
-      REVERSE_PROXY: ${CTFD_REVERSE_PROXY:-true}
+      REVERSE_PROXY: ${CTFD_REVERSE_PROXY:-1,1,1,1,1}
       SECRET_KEY: ${CTFD_SECRET_KEY}
     volumes:
       - ctfd_uploads:/var/uploads

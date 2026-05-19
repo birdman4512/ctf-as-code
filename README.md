@@ -9,7 +9,8 @@ The repo is intended to keep both the platform and starter challenge content und
 | Service | Purpose | Default local URL |
 |---|---|---|
 | Caddy | Reverse proxy | http://localhost |
-| CTFd | CTF platform | http://localhost |
+| Portal | Landing page for published CTF resources | http://localhost |
+| CTFd | CTF platform | http://localhost/ctfd/ |
 | Pi-hole | DNS and admin UI | http://localhost/pihole/admin/ |
 | MariaDB | CTFd database | Internal only |
 | Redis | CTFd cache | Internal only |
@@ -65,6 +66,7 @@ Local defaults in `.env.example` use plain HTTP on any hostname:
 
 ```env
 CTFD_SITE_ADDRESS=http://:80
+CTFD_PATH_PREFIX=/ctfd
 PIHOLE_PATH_PREFIX=/pihole
 ```
 
@@ -72,10 +74,11 @@ For public HTTPS, change them to real DNS names that point at the host:
 
 ```env
 CTFD_SITE_ADDRESS=ctf.example.com
+CTFD_PATH_PREFIX=/ctfd
 PIHOLE_PATH_PREFIX=/pihole
 ```
 
-Caddy will then handle ACME certificates on ports `80` and `443`. Pi-hole remains available under the configured path, for example `https://ctf.example.com/pihole/admin/`.
+Caddy will then handle ACME certificates on ports `80` and `443`. Services remain available under their configured paths, for example `https://ctf.example.com/ctfd/` and `https://ctf.example.com/pihole/admin/`.
 
 ## Configuration
 
@@ -91,10 +94,29 @@ Important variables:
 | `PIHOLE_WEBPASSWORD` | Pi-hole admin password, mapped to `FTLCONF_webserver_api_password` |
 | `PIHOLE_UPSTREAM_DNS` | Pi-hole upstream DNS servers, mapped to `FTLCONF_dns_upstreams` |
 | `CTFD_SITE_ADDRESS` | Caddy site address for CTFd |
+| `CTFD_PATH_PREFIX` | Subpath for CTFd |
 | `PIHOLE_PATH_PREFIX` | Subpath for Pi-hole, mapped to `FTLCONF_webserver_paths_prefix` |
 | `DNS_PORT` | Host DNS port for Pi-hole |
 
 Image versions are pinned in `.env.example` and can be updated deliberately.
+
+## Portal
+
+The root URL serves a small static portal from `portal/`.
+
+Edit `portal/resources.json` to publish additional CTF links:
+
+```json
+{
+  "title": "Rules",
+  "description": "Event rules, scope, and support details.",
+  "href": "/rules/",
+  "label": "Read rules",
+  "group": "Resources"
+}
+```
+
+Entries with `"disabled": true` are shown as placeholders.
 
 ## Challenge as Code
 
@@ -276,6 +298,9 @@ http://localhost:8080/pihole/admin/
 |       |-- challenge.json
 |       `-- files/
 |           `-- readme.txt
+|-- portal/
+|   |-- index.html
+|   `-- resources.json
 `-- scripts/
     |-- backup.ps1
     |-- restore.ps1
