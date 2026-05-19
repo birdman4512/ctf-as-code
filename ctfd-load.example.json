@@ -1,0 +1,9 @@
+{
+  "ctfd": {
+    "url": "http://localhost",
+    "notes": "Create an admin API token in CTFd and expose it as CTFD_TOKEN before loading."
+  },
+  "challenges": [
+    "challenges/example/challenge.json"
+  ]
+}

@@ -1,0 +1,7 @@
+{$CTFD_SITE_ADDRESS:http://localhost} {
+	reverse_proxy ctfd:8000
+}
+
+{$PIHOLE_SITE_ADDRESS:http://pihole.localhost} {
+	reverse_proxy pihole:80
+}

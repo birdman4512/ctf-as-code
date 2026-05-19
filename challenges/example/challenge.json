@@ -1,0 +1,14 @@
+{
+  "name": "Sanity Check",
+  "category": "Warmups",
+  "description": "Submit the flag to confirm your account and the platform are working.",
+  "value": 50,
+  "type": "standard",
+  "state": "hidden",
+  "flags": [
+    "CTF{welcome_to_the_game}"
+  ],
+  "files": [
+    "files/readme.txt"
+  ]
+}

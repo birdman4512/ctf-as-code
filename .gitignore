@@ -1,0 +1,6 @@
+.env
+*.sql
+*.tar.gz
+backups/
+__pycache__/
+.pytest_cache/

@@ -1,0 +1,138 @@
+services:
+  proxy:
+    image: caddy:${CADDY_VERSION:-2.11.2-alpine}
+    container_name: ctf-proxy
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      CTFD_SITE_ADDRESS: ${CTFD_SITE_ADDRESS:-http://localhost}
+      PIHOLE_SITE_ADDRESS: ${PIHOLE_SITE_ADDRESS:-http://pihole.localhost}
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      ctfd:
+        condition: service_started
+      pihole:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "caddy", "version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - proxy
+
+  ctfd:
+    image: ctfd/ctfd:${CTFD_VERSION:-3.8.1}
+    container_name: ctfd
+    restart: unless-stopped
+    environment:
+      UPLOAD_FOLDER: /var/uploads
+      DATABASE_URL: mysql+pymysql://ctfd:${CTFD_DB_PASSWORD}@ctfd-db/ctfd
+      REDIS_URL: redis://ctfd-cache:6379
+      WORKERS: ${CTFD_WORKERS:-1}
+      LOG_FOLDER: /var/log/CTFd
+      ACCESS_LOG: "-"
+      ERROR_LOG: "-"
+      REVERSE_PROXY: ${CTFD_REVERSE_PROXY:-true}
+      SECRET_KEY: ${CTFD_SECRET_KEY}
+    volumes:
+      - ctfd_uploads:/var/uploads
+      - ctfd_logs:/var/log/CTFd
+    depends_on:
+      ctfd-db:
+        condition: service_healthy
+      ctfd-cache:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=5).read()\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ctfd_internal
+      - proxy
+
+  ctfd-db:
+    image: mariadb:${MARIADB_VERSION:-10.11.13}
+    container_name: ctfd-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${CTFD_DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ctfd
+      MARIADB_USER: ctfd
+      MARIADB_PASSWORD: ${CTFD_DB_PASSWORD}
+    volumes:
+      - ctfd_db:/var/lib/mysql
+    networks:
+      - ctfd_internal
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  ctfd-cache:
+    image: redis:${REDIS_VERSION:-7.4.8-alpine}
+    container_name: ctfd-cache
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ctfd_cache:/data
+    networks:
+      - ctfd_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pihole:
+    image: pihole/pihole:${PIHOLE_VERSION:-2026.04.1}
+    container_name: pihole
+    restart: unless-stopped
+    ports:
+      - "${DNS_PORT:-53}:53/tcp"
+      - "${DNS_PORT:-53}:53/udp"
+    environment:
+      TZ: ${TZ:-Australia/Brisbane}
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
+      PIHOLE_DNS_: ${PIHOLE_UPSTREAM_DNS:-1.1.1.1;1.0.0.1}
+      DNSMASQ_LISTENING: all
+    volumes:
+      - pihole_config:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    healthcheck:
+      test: ["CMD-SHELL", "dig +short @127.0.0.1 pi-hole.net || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - proxy
+
+volumes:
+  caddy_data:
+  caddy_config:
+  ctfd_uploads:
+  ctfd_logs:
+  ctfd_db:
+  ctfd_cache:
+  pihole_config:
+  pihole_dnsmasq:
+
+networks:
+  ctfd_internal:
+    internal: true
+  proxy:
