@@ -64,6 +64,40 @@
       padding-top: 28px;
     }
 
+    details {
+      margin-top: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    summary {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 18px;
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    summary::after {
+      content: "+";
+      color: var(--accent);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    details[open] summary::after {
+      content: "-";
+    }
+
+    .admin-grid {
+      padding: 0 16px 16px;
+    }
+
     .card {
       min-height: 210px;
       display: flex;
@@ -147,10 +181,17 @@
     </header>
 
     <section id="resources" class="grid" aria-label="CTF resources"></section>
+
+    <details id="admin-section" hidden>
+      <summary>Admin Links</summary>
+      <section id="admin-resources" class="grid admin-grid" aria-label="Admin resources"></section>
+    </details>
   </main>
 
   <script>
     const container = document.querySelector("#resources");
+    const adminContainer = document.querySelector("#admin-resources");
+    const adminSection = document.querySelector("#admin-section");
     const portalTitle = document.querySelector("#portal-title");
     const portalDescription = document.querySelector("#portal-description");
 
@@ -180,6 +221,8 @@
       } else {
         const link = document.createElement("a");
         link.href = resource.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
         link.textContent = resource.label || "Open";
         article.append(content, link);
       }
@@ -200,7 +243,13 @@
         portalTitle.textContent = title;
         portalDescription.textContent = description;
         portalDescription.hidden = description.length === 0;
-        container.replaceChildren(...resources.map(card));
+
+        const adminResources = resources.filter((resource) => resource.admin);
+        const publicResources = resources.filter((resource) => !resource.admin);
+
+        container.replaceChildren(...publicResources.map(card));
+        adminContainer.replaceChildren(...adminResources.map(card));
+        adminSection.hidden = adminResources.length === 0;
       })
       .catch(() => {
         container.textContent = "Resource list could not be loaded.";

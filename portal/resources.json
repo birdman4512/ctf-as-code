@@ -14,7 +14,8 @@
       "description": "DNS sinkhole admin interface for local CTF infrastructure.",
       "href": "/pihole/admin/",
       "label": "Open admin",
-      "group": "Core"
+      "group": "Admin",
+      "admin": true
     },
     {
       "title": "Challenge Files",

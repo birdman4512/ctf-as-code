@@ -127,6 +127,7 @@ Add links by appending objects to the `resources` list:
 ```
 
 Entries with `"disabled": true` are shown as placeholders.
+Entries with `"admin": true` are shown in a collapsed Admin Links section. Active links open in a new browser tab/window.
 
 ## Challenge as Code
 
