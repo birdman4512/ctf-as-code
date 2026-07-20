@@ -70,6 +70,8 @@ CTFD_PATH_PREFIX=/ctfd
 PIHOLE_PATH_PREFIX=/pihole
 ```
 
+Because the default site address has an explicit `http://` scheme and no hostname, Caddy never attempts ACME certificate issuance for it. This is what makes the default deployment work fully offline / air-gapped — no outbound connection to a certificate authority is made, and nothing blocks startup waiting on one.
+
 For public HTTPS, change them to real DNS names that point at the host:
 
 ```env
@@ -78,7 +80,18 @@ CTFD_PATH_PREFIX=/ctfd
 PIHOLE_PATH_PREFIX=/pihole
 ```
 
-Caddy will then handle ACME certificates on ports `80` and `443`. Services remain available under their configured paths, for example `https://ctf.example.com/ctfd/` and `https://ctf.example.com/pihole/admin/`.
+Caddy will then handle ACME certificates on ports `80` and `443`. Services remain available under their configured paths, for example `https://ctf.example.com/ctfd/` and `https://ctf.example.com/pihole/admin/`. This mode requires outbound internet access to the ACME CA and a hostname that resolves to the host, so keep the plain-HTTP default for offline events.
+
+### Offline / air-gapped deployments
+
+The stack only needs internet access once, to pull the pinned images. After that:
+
+```powershell
+docker compose --env-file .env.example pull
+docker save -o ctf-stack-images.tar $(docker compose --env-file .env.example config --images)
+```
+
+Copy `ctf-stack-images.tar` to the offline host, then `docker load -i ctf-stack-images.tar` before `docker compose up -d`. Keep `CTFD_SITE_ADDRESS=http://:80` (the default) so Caddy never tries to reach an ACME CA.
 
 ## Configuration
 

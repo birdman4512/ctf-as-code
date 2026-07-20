@@ -1,6 +1,6 @@
 services:
   proxy:
-    image: caddy:${CADDY_VERSION:-2.11.2-alpine}
+    image: caddy:${CADDY_VERSION:-2.11.4-alpine}
     container_name: ctf-proxy
     restart: unless-stopped
     ports:
@@ -29,7 +29,7 @@ services:
       - proxy
 
   ctfd:
-    image: ctfd/ctfd:${CTFD_VERSION:-3.8.1}
+    image: ctfd/ctfd:${CTFD_VERSION:-3.8.6}
     container_name: ctfd
     restart: unless-stopped
     environment:
@@ -61,7 +61,7 @@ services:
       - proxy
 
   ctfd-db:
-    image: mariadb:${MARIADB_VERSION:-10.11.13}
+    image: mariadb:${MARIADB_VERSION:-10.11.18}
     container_name: ctfd-db
     restart: unless-stopped
     environment:
@@ -81,7 +81,7 @@ services:
       start_period: 30s
 
   ctfd-cache:
-    image: redis:${REDIS_VERSION:-7.4.8-alpine}
+    image: redis:${REDIS_VERSION:-7.4.9-alpine}
     container_name: ctfd-cache
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes"]
@@ -96,7 +96,7 @@ services:
       retries: 5
 
   pihole:
-    image: pihole/pihole:${PIHOLE_VERSION:-2026.04.1}
+    image: pihole/pihole:${PIHOLE_VERSION:-2026.07.2}
     container_name: pihole
     restart: unless-stopped
     ports:
