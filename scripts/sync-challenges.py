@@ -24,13 +24,16 @@ def parse_args():
 
 
 def api(method, path, payload=None, headers=None):
+    # CTFd only inspects the Authorization header when the request looks like
+    # JSON (Flask's request.is_json, keyed off Content-Type) - see
+    # CTFd/utils/initialization/__init__.py's `tokens()` before_request hook.
+    # Without this header even a valid token is silently ignored on GETs.
     body = None
-    req_headers = {"Authorization": f"Token {CTFD_TOKEN}"}
+    req_headers = {"Authorization": f"Token {CTFD_TOKEN}", "Content-Type": "application/json"}
     if headers:
         req_headers.update(headers)
     if payload is not None:
         body = json.dumps(payload).encode("utf-8")
-        req_headers["Content-Type"] = "application/json"
 
     req = request.Request(f"{CTFD_URL}{path}", data=body, headers=req_headers, method=method)
     try:
@@ -71,24 +74,27 @@ def multipart(fields, files):
 
 
 def existing_challenges():
-    response = api("GET", "/api/v1/challenges")
-    return {item["name"]: item for item in response.get("data", [])}
+    # ?view=admin is required to see hidden challenges - the default listing
+    # only returns visible ones, which would otherwise cause every hidden
+    # challenge to look "new" and get duplicated on each sync.
+    response = api("GET", "/api/v1/challenges?view=admin")
+    return {item["name"].lower(): item for item in response.get("data", [])}
 
 
 def load_challenges():
     if CTFD_MANIFEST:
         manifest_path = pathlib.Path(CTFD_MANIFEST)
-        with manifest_path.open(encoding="utf-8") as handle:
+        with manifest_path.open(encoding="utf-8-sig") as handle:
             manifest = json.load(handle)
         for relative in manifest.get("challenges", []):
             challenge_path = manifest_path.parent / relative
-            with challenge_path.open(encoding="utf-8") as handle:
+            with challenge_path.open(encoding="utf-8-sig") as handle:
                 data = json.load(handle)
             yield challenge_path.parent, data
         return
 
     for manifest in sorted(CHALLENGES_DIR.glob("*/challenge.json")):
-        with manifest.open(encoding="utf-8") as handle:
+        with manifest.open(encoding="utf-8-sig") as handle:
             data = json.load(handle)
         yield manifest.parent, data
 
@@ -151,8 +157,8 @@ def main():
             "type": challenge.get("type", "standard"),
         }
 
-        if challenge["name"] in known:
-            challenge_id = known[challenge["name"]]["id"]
+        if challenge["name"].lower() in known:
+            challenge_id = known[challenge["name"].lower()]["id"]
             api("PATCH", f"/api/v1/challenges/{challenge_id}", payload)
             action = "updated"
             upload_files = UPLOAD_FILES_ON_UPDATE
