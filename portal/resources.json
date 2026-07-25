@@ -27,11 +27,17 @@
     },
     {
       "title": "Rules",
-      "description": "Add event rules, scope, allowed tools, and support information.",
-      "href": "#",
-      "label": "Not published yet",
-      "group": "Resources",
-      "disabled": true
+      "description": "Event rules, scope, allowed tools, and support information.",
+      "href": "/rules/",
+      "label": "Read rules",
+      "group": "Resources"
+    },
+    {
+      "title": "MITRE ATT&CK",
+      "description": "Reference for the tactics, techniques, and procedures (TTPs) referenced in some challenges.",
+      "href": "https://attack.mitre.org/",
+      "label": "Open reference",
+      "group": "Resources"
     }
   ]
 }

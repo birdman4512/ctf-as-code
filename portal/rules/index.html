@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rules</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101316;
+      --panel: #181d21;
+      --text: #edf2f4;
+      --muted: #aeb8c2;
+      --line: #323c45;
+      --accent: #2dd4bf;
+      --accent-2: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(860px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 80px;
+    }
+
+    a.back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    a.back:hover {
+      color: var(--accent);
+    }
+
+    header {
+      padding: 20px 0 32px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .lede {
+      margin: 0;
+      max-width: 640px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    section {
+      margin-bottom: 32px;
+      padding: 20px 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    p, li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      margin-left: 8px;
+      background: var(--accent-2);
+      color: var(--bg);
+      border-radius: 999px;
+      font-size: .7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+
+    code {
+      padding: 2px 6px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font-size: .9em;
+      color: var(--accent);
+    }
+
+    section a {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <a class="back" href="../">&larr; Back to portal</a>
+      <h1>Event Rules <span class="tag">Draft &mdash; edit me</span></h1>
+      <p class="lede">Please read this page before you start. If anything here is unclear, ask an organizer rather than guessing.</p>
+    </header>
+
+    <section>
+      <h2>Format</h2>
+      <ul>
+        <li>This is a <strong>blue-team / incident-response</strong> style event: you're investigating an already-compromised environment using the provided packet captures, host logs, and analysis tools.</li>
+        <li>Challenges are organized as a linked story. Later categories build on evidence you find in earlier ones, so work roughly in order the first time through.</li>
+        <li>The event runs from <strong>[start time/date]</strong> to <strong>[end time/date]</strong>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Scope</h2>
+      <ul>
+        <li><strong>Stay in scope.</strong> Only exercise the targets listed on the scoreboard. Never exercise the scoreboard, organiser systems, or other teams.</li>
+        <li><strong>Don't break things.</strong> No DoS, no deleting files, no patching the vuln or locking others out. Keep your scanning at a sane rate.</li>
+        <li><strong>Report bugs.</strong> Found a leaked flag or a hole in the platform? Tell the organisers.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Flags &amp; scoring</h2>
+      <ul>
+        <li><strong>Submit flags on the scoreboard.</strong></li>
+        <li>No brute-forcing the submit box.</li>
+        <li>Each challenge has a fixed point value shown on the platform; there is no dynamic/decay scoring.</li>
+        <li>Hints, if available, may cost points &mdash; check each challenge's description before requesting one.</li>
+        <li>The scoreboard is <strong>[public / frozen for the last X minutes / hidden]</strong> &mdash; state your policy here.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Submitting Answers</h2>
+      <ul>
+        <li>Answers are <strong>case insensitive</strong>.</li>
+        <li>IP addresses and ports: <code>xyz.xyz.xyz.xyz:abcd</code></li>
+        <li>Dates and times are all <strong>ISO 8601</strong> / <strong>RFC 3339</strong>, big-endian:
+          <ul>
+            <li><code>YYYY/MM/DD HH:MM:SS UTC</code></li>
+            <li>Or copy and paste the timestamp directly from the CTF data platform.</li>
+          </ul>
+        </li>
+        <li>Multiple answers are comma separated: <code>x, y, z</code> or <code>x,y,z</code></li>
+        <li>If you believe you have the correct answer but it won't submit &mdash; talk to event staff, don't keep guessing.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Conduct</h2>
+      <ul>
+        <li>Be respectful toward other participants and organizers. Harassment of any kind will result in removal from the event.</li>
+        <li><strong>Don't share flags.</strong> Not with other teams, not publicly. No write-ups or spoilers until the event ends.</li>
+        <li><strong>One team per person.</strong> No second accounts.</li>
+        <li>Organizers may adjust scoring, disqualify participants, or amend these rules if needed to keep the event fair &mdash; announcements will be posted on the platform.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Support</h2>
+      <ul>
+        <li><strong>Ask for help in the support channel.</strong> Contact <strong>[support channel / email / person]</strong>.</li>
+        <li>Include the challenge name, not the flag. Reset your container before reporting it broken.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
